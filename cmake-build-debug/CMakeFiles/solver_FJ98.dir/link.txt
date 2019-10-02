@@ -1,0 +1,1 @@
+/usr/bin/c++  -g   CMakeFiles/solver_FJ98.dir/main.cpp.o CMakeFiles/solver_FJ98.dir/ExpressionSolver.cpp.o  -o solver_FJ98 
