@@ -19,8 +19,8 @@ int InfixToPostfix::operatorPrecedence(const std::string& operaTor)
 std::string InfixToPostfix::infixToPostfix()
 {
     std::stack<std::string> operatorsStack;
-    std::stack<Node> nodesStack;
-    std::stack<Node> saveNodesStack;
+    std::stack<Node*> nodesStack;
+    std::stack<Node*> saveNodesStack;
     std::string postfixExp;
     std::vector<std::string> stackImitator;
     for (int i = 0; i < static_cast<int>(this->_expression.size()); ++i)
@@ -38,14 +38,14 @@ std::string InfixToPostfix::infixToPostfix()
                 s.push_back(this->_expression[i + 1]);
                 postfixExp += s;
 
-                auto newNode = Node{s};
+                auto newNode = new Node{s};
                 nodesStack.push(newNode);
                 stackImitator.push_back(s);
                 ++i;
             }else{
                 postfixExp += s;
 
-                auto newNode = Node{s};
+                auto newNode = new Node{s};
                 nodesStack.push(newNode);
                 stackImitator.push_back(s);
             }
@@ -59,7 +59,7 @@ std::string InfixToPostfix::infixToPostfix()
             {
                 postfixExp += operatorsStack.top();
 //                stackImitator.push_back(operatorsStack.top());
-                auto newNode = Node{operatorsStack.top()};
+                auto newNode = new Node{operatorsStack.top()};
                 nodesStack.push(newNode);
                 stackImitator.push_back(operatorsStack.top());
 
@@ -78,7 +78,7 @@ std::string InfixToPostfix::infixToPostfix()
                 if (operatorsStack.top() == "(") { operatorsStack.pop(); break; }
                 postfixExp += operatorsStack.top();
 
-                auto newNode = Node{operatorsStack.top()};
+                auto newNode = new Node{operatorsStack.top()};
                 nodesStack.push(newNode);
                 stackImitator.push_back(operatorsStack.top());
 
@@ -93,7 +93,7 @@ std::string InfixToPostfix::infixToPostfix()
 //        postfixExp += " ";
         postfixExp += operatorsStack.top();
 
-        auto newNode = Node{operatorsStack.top()};
+        auto newNode = new Node{operatorsStack.top()};
         nodesStack.push(newNode);
         stackImitator.push_back(operatorsStack.top());
 
@@ -104,19 +104,18 @@ std::string InfixToPostfix::infixToPostfix()
     }
     this->_expression = postfixExp;
 
-//    std::stack<Node> postfixStack;
-//    cout << "My nodes stack TOP: " << nodesStack.top()._data << endl;
+//    cout << "My nodes stack TOP: " << nodesStack.top()->_data << endl;
 //    cout << "My nodes stack: ";
     for (int j = nodesStack.size(); j > 0; --j) {
-//        cout << nodesStack.top()._data << " ";
+//        cout << nodesStack.top()->_data << " ";
         this->postfixStack.push(nodesStack.top());
         nodesStack.pop();
-    }/* cout << endl;*/
-
-//    cout << "My postfix stack TOP: " << postfixStack.top()._data << endl;
+    } /*cout << endl;*/
+//
+//    cout << "My postfix stack TOP: " << postfixStack.top()->_data << endl;
 //    cout << "My postfix stack: ";
 //    for (int k = postfixStack.size(); k > 0; --k) {
-//        cout << postfixStack.top()._data << " ";
+//        cout << postfixStack.top()->_data << " ";
 //        postfixStack.pop();
 //    } cout << endl;
 
@@ -130,38 +129,56 @@ std::string InfixToPostfix::infixToPostfix()
 
 void InfixToPostfix::printEquation() { std::cout << this->_expression << std::endl; }
 
+
 void InfixToPostfix::buildTreeFromPostfix()
 {
-    std::stack<Node*> treeHelper;
+    buildTree(this->root);
+}
 
-    for (int i = this->postfixStack.size(); i > 0; --i)
-    {
-        this->root = &postfixStack.top();
-        if (isOperator(postfixStack.top()._data)) {
-            this->root->_right = treeHelper.top();
-            treeHelper.pop();
-            this->root->_left = treeHelper.top();
-            treeHelper.pop();
-            treeHelper.push(&postfixStack.top());
-        }
-        treeHelper.push(&postfixStack.top());
+void InfixToPostfix::buildTree(Node* tempRoot)
+{
+    std::stack<Node*> treeHelper;
+    int sizet = treeHelper.size();
+
+//    if (!isOperator(postfixStack.top()->_data)) {
+//        treeHelper.push(postfixStack.top());
+//        postfixStack.pop();
+//        treeHelper.push(postfixStack.top());
+//        postfixStack.pop();
+//    }
+    // FIRST ITERATION
+//    while (!isOperator(postfixStack.top()->_data)) {
+//        treeHelper.push(postfixStack.top());
+//        postfixStack.pop();
+//        treeHelper.push(postfixStack.top());
+//        postfixStack.pop();
+//    }
+//    tempRoot = postfixStack.top();
+//    tempRoot->_right = treeHelper.top();
+//    treeHelper.pop();
+//    tempRoot->_left = treeHelper.top();
+//    treeHelper.pop();
+//    postfixStack.pop();
+
+    if (!isOperator(postfixStack.top()->_data)) {
+        treeHelper.push(postfixStack.top());
+        postfixStack.pop();
+        treeHelper.push(postfixStack.top());
         postfixStack.pop();
     }
 
-    privateTraverseInOrder(this->root);
+    if (!tempRoot){ return; }
+
+    buildTree(tempRoot->_left);
+
+    treeHelper.pop();
+    buildTree(tempRoot->_right);
+    treeHelper.pop();
+    postfixStack.pop();
+
+//    privateTraverseInOrder(tempRoot);
 
 }
-
-//bool InfixToPostfix::nextCharIsOperator(int pos)
-//{
-//    std::string s;
-//    s.push_back(this->_expression[pos + 1]);
-//    return isOperator(s);
-//}
-
-
-
-
 
 void InfixToPostfix::privateTraverseInOrder(Node* traverse)
 {
@@ -171,6 +188,95 @@ void InfixToPostfix::privateTraverseInOrder(Node* traverse)
     privateTraverseInOrder(traverse->_right);
 }
 
+
+
+
+//void InfixToPostfix::buildTreeFromPostfix()
+//{
+//    buildTree(this->root);
+//}
+//
+//void InfixToPostfix::buildTree(Node* tempRoot)
+//{
+//    std::stack<Node*> treeHelper(postfixStack);
+//    int sizet = treeHelper.size();
+////    cout << "My postfix stack TOP: " << this->postfixStack.top()->_data << endl;
+////    cout << "My postfix stack: ";
+////    for (int k = postfixStack.size(); k > 0; --k) {
+////        cout << postfixStack.top()->_data << " ";
+////        treeHelper.push(postfixStack.top());
+////        postfixStack.pop();
+////    } cout << endl;
+//
+////    cout << "My helper stack TOP: " << treeHelper.top()->_data << endl;
+////    cout << "My helper stack: ";
+////    for (int k = treeHelper.size(); k > 0; --k) {
+////        cout << treeHelper.top()->_data << " ";
+////        treeHelper.pop();
+////    } cout << endl;
+//
+//    // FIRST ITERATION
+//    while (!isOperator(postfixStack.top()->_data)) {
+//        treeHelper.push(postfixStack.top());
+//        postfixStack.pop();
+//        treeHelper.push(postfixStack.top());
+//        postfixStack.pop();
+//    }
+//    this->root = postfixStack.top();
+//    this->root->_right = treeHelper.top();
+//    treeHelper.pop();
+//    this->root->_left = treeHelper.top();
+//    treeHelper.pop();
+//    postfixStack.pop();
+//
+//    while (!isOperator(postfixStack.top()->_data)) {
+//        treeHelper.push(postfixStack.top());
+//        postfixStack.pop();
+//        treeHelper.push(postfixStack.top());
+//        postfixStack.pop();
+//    }
+//    this->root = postfixStack.top();
+//    this->root->_right = treeHelper.top();
+//    treeHelper.pop();
+//    this->root->_left = treeHelper.top();
+//    treeHelper.pop();
+//    postfixStack.pop();
+//
+////    this->root = postfixStack.top();
+////    postfixStack.pop();
+////    for (int i = this->postfixStack.size(); i > 0; --i)
+////    {
+////        this->root = postfixStack.top();
+////        treeHelper.push(postfixStack.top());
+////        if (isOperator(postfixStack.top()->_data)) {
+//////            cout << this->root->_data << "\t";
+////            this->root->_right = treeHelper.top();
+//////            cout << this->root->_right->_data<< "\t";
+////            treeHelper.pop();
+////            this->root->_left = treeHelper.top();
+//////            cout << this->root->_left->_data<< "\t";
+////            treeHelper.pop();
+////
+////            treeHelper.push(postfixStack.top());
+////        }
+////
+////        postfixStack.pop();
+////    }
+//
+//    privateTraverseInOrder(this->root);
+//
+//}
+
+
+
+
+
+//bool InfixToPostfix::nextCharIsOperator(int pos)
+//{
+//    std::string s;
+//    s.push_back(this->_expression[pos + 1]);
+//    return isOperator(s);
+//}
 
 
 //// Returns root of constructed tree for given

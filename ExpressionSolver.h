@@ -19,7 +19,7 @@ private:
         Node(): _data{""}, _left{nullptr}, _right{nullptr} {}
         explicit Node(std::string data): _data{std::move(data)}, _left{nullptr}, _right{nullptr} {}
     };
-    std::stack<Node> postfixStack;
+    std::stack<Node*> postfixStack;
     Node* root;
 
 private:
@@ -27,14 +27,15 @@ private:
     static bool isOperator(const std::string&);
     static int operatorPrecedence(const std::string&);
     static bool priority(const std::string&, const std::string&);
-    void privateTraverseInOrder(Node* traverse);
+    static void privateTraverseInOrder(Node*);
 //    bool nextCharIsOperator(int);
 
 public:
     explicit InfixToPostfix(std::string);
     std::string infixToPostfix();
+    void buildTree(Node*);
     void buildTreeFromPostfix();
-    inline void traverseInOrder() { this->privateTraverseInOrder(this->root); }
+    inline void traverseInOrder() { privateTraverseInOrder(this->root); }
     void printEquation();
 };
 
