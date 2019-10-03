@@ -132,13 +132,55 @@ void InfixToPostfix::printEquation() { std::cout << this->_expression << std::en
 
 void InfixToPostfix::buildTreeFromPostfix()
 {
-    buildTree(this->root);
+    this->root = buildTree(this->root);
+    privateTraverseInOrder(this->root);
 }
 
-void InfixToPostfix::buildTree(Node* tempRoot)
+/*  Push A onto the stack
+    Push 2 onto the stack
+    Pop 2 and A, create ^-node (with A and 2 below), push it on the stack
+    Push 2 on stack
+    Push A on stack
+    Pop A and 2 and combine to form the *-node
+    etc.*/
+Node* InfixToPostfix::buildTree(Node* tempRoot)
 {
     std::stack<Node*> treeHelper;
-    int sizet = treeHelper.size();
+
+    while (!postfixStack.empty())
+    {
+        if (!isOperator(postfixStack.top()->_data)) {
+            treeHelper.push(postfixStack.top()); postfixStack.pop();
+        }else {
+            tempRoot = postfixStack.top();postfixStack.pop();
+            tempRoot->_right = treeHelper.top(); treeHelper.pop();
+            tempRoot->_left = treeHelper.top(); treeHelper.pop();
+
+            treeHelper.push(tempRoot);
+        }
+    }
+    if (!treeHelper.empty())
+    {
+        treeHelper.push(tempRoot);
+        tempRoot = treeHelper.top(); treeHelper.pop();
+    }
+
+
+    // FIRST ITERATION
+//    for (int i = static_cast<int>(postfixStack.size()-1); i > 0; i-=2) {
+//        while (!isOperator(postfixStack.top()->_data)) {
+//            treeHelper.push(postfixStack.top()); postfixStack.pop();
+//        }
+//        tempRoot = postfixStack.top(); postfixStack.pop();
+//
+//        tempRoot->_right = treeHelper.top(); treeHelper.pop();
+//        tempRoot->_left = treeHelper.top(); treeHelper.pop();
+//
+//        treeHelper.push(tempRoot);
+//        tempRoot = treeHelper.top();
+//    }
+
+    return tempRoot;
 
 //    if (!isOperator(postfixStack.top()->_data)) {
 //        treeHelper.push(postfixStack.top());
@@ -146,38 +188,23 @@ void InfixToPostfix::buildTree(Node* tempRoot)
 //        treeHelper.push(postfixStack.top());
 //        postfixStack.pop();
 //    }
-    // FIRST ITERATION
-//    while (!isOperator(postfixStack.top()->_data)) {
-//        treeHelper.push(postfixStack.top());
-//        postfixStack.pop();
-//        treeHelper.push(postfixStack.top());
-//        postfixStack.pop();
-//    }
-//    tempRoot = postfixStack.top();
-//    tempRoot->_right = treeHelper.top();
+//
+//    if (!tempRoot){ return; }
+//
+//    buildTree(tempRoot->_left);
+//
 //    treeHelper.pop();
-//    tempRoot->_left = treeHelper.top();
+//    buildTree(tempRoot->_right);
 //    treeHelper.pop();
 //    postfixStack.pop();
+}
 
-    if (!isOperator(postfixStack.top()->_data)) {
-        treeHelper.push(postfixStack.top());
-        postfixStack.pop();
-        treeHelper.push(postfixStack.top());
-        postfixStack.pop();
-    }
-
-    if (!tempRoot){ return; }
-
-    buildTree(tempRoot->_left);
-
-    treeHelper.pop();
-    buildTree(tempRoot->_right);
-    treeHelper.pop();
-    postfixStack.pop();
-
-//    privateTraverseInOrder(tempRoot);
-
+size_t InfixToPostfix::privateFindHeight(Node* current)
+{
+    if (!current) { return 0; }
+    int left = privateFindHeight(current->_left);
+    int right = privateFindHeight(current->_right);
+    return std::max( left, right ) + 1;
 }
 
 void InfixToPostfix::privateTraverseInOrder(Node* traverse)

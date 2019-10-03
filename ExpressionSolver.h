@@ -8,17 +8,18 @@
 
 using namespace std;
 
+struct Node {
+    std::string _data;
+    Node* _right;
+    Node* _left;
+    Node(): _data{""}, _left{nullptr}, _right{nullptr} {}
+    explicit Node(std::string data): _data{std::move(data)}, _left{nullptr}, _right{nullptr} {}
+};
 
 class InfixToPostfix{
 private:
     std::string _expression;
-    struct Node {
-        std::string _data;
-        Node* _right;
-        Node* _left;
-        Node(): _data{""}, _left{nullptr}, _right{nullptr} {}
-        explicit Node(std::string data): _data{std::move(data)}, _left{nullptr}, _right{nullptr} {}
-    };
+
     std::stack<Node*> postfixStack;
     Node* root;
 
@@ -27,16 +28,17 @@ private:
     static bool isOperator(const std::string&);
     static int operatorPrecedence(const std::string&);
     static bool priority(const std::string&, const std::string&);
-    static void privateTraverseInOrder(Node*);
-//    bool nextCharIsOperator(int);
+    static void privateTraverseInOrder(Node* traverse);
 
 public:
     explicit InfixToPostfix(std::string);
     std::string infixToPostfix();
-    void buildTree(Node*);
     void buildTreeFromPostfix();
+    Node* buildTree(Node*);
+    size_t privateFindHeight(Node*);
     inline void traverseInOrder() { privateTraverseInOrder(this->root); }
     void printEquation();
+    float solveEquation();
 };
 
 
