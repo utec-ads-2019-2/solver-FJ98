@@ -13,6 +13,8 @@ int main() {
     equation.printEquation();
     equation.infixToPostfix();
     equation.printEquation();
+    equation.buildTreeFromPostfix();
+//    equation.printEquation();
 //    auto post = equation.infixToPostfix();
 //    cout << post << endl;
 

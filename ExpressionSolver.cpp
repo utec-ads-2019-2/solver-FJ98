@@ -130,6 +130,28 @@ std::string InfixToPostfix::infixToPostfix()
 
 void InfixToPostfix::printEquation() { std::cout << this->_expression << std::endl; }
 
+void InfixToPostfix::buildTreeFromPostfix()
+{
+    std::stack<Node*> treeHelper;
+
+    for (int i = this->postfixStack.size(); i > 0; --i)
+    {
+        this->root = &postfixStack.top();
+        if (isOperator(postfixStack.top()._data)) {
+            this->root->_right = treeHelper.top();
+            treeHelper.pop();
+            this->root->_left = treeHelper.top();
+            treeHelper.pop();
+            treeHelper.push(&postfixStack.top());
+        }
+        treeHelper.push(&postfixStack.top());
+        postfixStack.pop();
+    }
+
+    privateTraverseInOrder(this->root);
+
+}
+
 //bool InfixToPostfix::nextCharIsOperator(int pos)
 //{
 //    std::string s;
@@ -141,13 +163,13 @@ void InfixToPostfix::printEquation() { std::cout << this->_expression << std::en
 
 
 
-
-
-
-
-
-
-
+void InfixToPostfix::privateTraverseInOrder(Node* traverse)
+{
+    if (!traverse) return;
+    privateTraverseInOrder(traverse->_left);
+    cout << traverse->_data << " ";
+    privateTraverseInOrder(traverse->_right);
+}
 
 
 
@@ -194,3 +216,4 @@ void InfixToPostfix::printEquation() { std::cout << this->_expression << std::en
 //
 //    return t;
 //}
+

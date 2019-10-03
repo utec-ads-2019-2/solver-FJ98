@@ -27,13 +27,14 @@ private:
     static bool isOperator(const std::string&);
     static int operatorPrecedence(const std::string&);
     static bool priority(const std::string&, const std::string&);
+    void privateTraverseInOrder(Node* traverse);
 //    bool nextCharIsOperator(int);
 
 public:
     explicit InfixToPostfix(std::string);
     std::string infixToPostfix();
     void buildTreeFromPostfix();
-
+    inline void traverseInOrder() { this->privateTraverseInOrder(this->root); }
     void printEquation();
 };
 
