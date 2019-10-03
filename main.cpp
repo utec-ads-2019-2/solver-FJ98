@@ -9,7 +9,7 @@ int main() {
 //    string infix = "7/4*((1+2)^4*2)+3";
 //    auto postfix = infixToPostfix(infix);
 //    cout << postfix << endl;
-    Equation equation("7/4*((1+2)^4*2)+3");
+    PostFixExp equation("75/44*((12+21)^48*25)+3");
     equation.printEquation();
     equation.infixToPostfix();
     equation.printEquation();

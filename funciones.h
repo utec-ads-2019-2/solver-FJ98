@@ -1,4 +1,4 @@
-//// Created by felix on 10/1/19.
+// Created by felix on 10/1/19.
 //#ifndef SOLVER_FJ98_FUNCIONES_H
 //#define SOLVER_FJ98_FUNCIONES_H
 //
