@@ -20,7 +20,6 @@ struct Node {
 
         delete this;
     }
-//    static char isNumberDigit() {this->_data };
     float execute() {
         const char* dat = this->_data.c_str();
         switch (*dat) {
@@ -34,7 +33,7 @@ struct Node {
     }
 };
 
-class InfixToPostfix{
+class Equation{
 private:
     std::string _expression;
 
@@ -47,24 +46,23 @@ private:
     static bool isOperand(const std::string&);
     static bool isOperator(const std::string&);
     static bool isValidForVariableName (const std::string&);
-    static int operatorPrecedence(const std::string&);
+    static int opPrecedence(const std::string &operaTor);
     static bool priority(const std::string&, const std::string&);
     static void privateTraverseInOrder(Node* traverse);
+    static void privateTraversePostOrder(Node* traverse);
     bool foundInMyMap(const std::string&);
     int valueInMyMapCorrespondingToVariable(const std::string&);
 
 public:
-    explicit InfixToPostfix(std::string);
+    explicit Equation(std::string);
     std::string infixToPostfix();
     void buildTreeFromPostfix();
     Node* buildTree(Node*);
-    static size_t privateFindHeight(Node*);
-    inline void traverseInOrder() { privateTraverseInOrder(this->root); }
-    void printEquation();
     float solveEquation();
-    void askValues();
     std::string getEquation() { return this->_expression; }
-    ~InfixToPostfix();
+    void traverseInOrder();
+    void traversePostOrder();
+    ~Equation();
 };
 
 
