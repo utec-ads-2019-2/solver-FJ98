@@ -215,6 +215,15 @@ void InfixToPostfix::privateTraverseInOrder(Node* traverse)
     privateTraverseInOrder(traverse->_right);
 }
 
+float InfixToPostfix::solveEquation() {
+    return this->root->execute();
+}
+
+InfixToPostfix::~InfixToPostfix() {
+    if (!this->root) { return; }
+    else { this->root->killSelf(); }
+}
+
 
 
 

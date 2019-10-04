@@ -14,6 +14,24 @@ struct Node {
     Node* _left;
     Node(): _data{""}, _left{nullptr}, _right{nullptr} {}
     explicit Node(std::string data): _data{std::move(data)}, _left{nullptr}, _right{nullptr} {}
+    void killSelf() {
+        if (this->_left) this->_left->killSelf();
+        else if (this->_right) this->_right->killSelf();
+
+        delete this;
+    }
+
+    float execute() {
+        const char* dat = this->_data.c_str();
+        switch (*dat) {
+            case '+': return this->_left->execute() + this->_right->execute();
+            case '-': return this->_left->execute() - this->_right->execute();
+            case '*': return this->_left->execute() * this->_right->execute();
+            case '/': return this->_left->execute() / this->_right->execute();
+            case '^': return std::pow(this->_left->execute(), this->_right->execute());
+            default:  return stof(this->_data);
+        }
+    }
 };
 
 class InfixToPostfix{
@@ -39,6 +57,8 @@ public:
     inline void traverseInOrder() { privateTraverseInOrder(this->root); }
     void printEquation();
     float solveEquation();
+    std::string getEquation() { return this->_expression; }
+    ~InfixToPostfix();
 };
 
 
