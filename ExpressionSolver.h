@@ -4,15 +4,13 @@
 
 #include <bits/stdc++.h>
 
-#include <utility>
-
 using namespace std;
 
 struct Node {
     std::string _data;
     Node* _right;
     Node* _left;
-    Node(): _data{""}, _left{nullptr}, _right{nullptr} {}
+    Node(): _data{" "}, _left{nullptr}, _right{nullptr} {}
     explicit Node(std::string data): _data{std::move(data)}, _left{nullptr}, _right{nullptr} {}
     void killSelf() {
         if (this->_left) this->_left->killSelf();
@@ -55,33 +53,15 @@ private:
 
 public:
     explicit Equation(std::string);
+
     std::string infixToPostfix();
     void buildTreeFromPostfix();
-    Node* buildTree(Node*);
     float solveEquation();
     std::string getEquation() { return this->_expression; }
+
     void traverseInOrder();
     void traversePostOrder();
     ~Equation();
 };
-
-
-//class ExpressionSolver {
-//private:
-//    struct Node {
-//        std::string _data;
-//        Node* _right;
-//        Node* _left;
-//        Node(): _data{""}, _left{nullptr}, _right{nullptr} {}
-//        explicit Node(std::string data): _data{std::move(data)}, _left{nullptr}, _right{nullptr} {}
-//    };
-//    Node* root;
-//
-//public:
-//    ExpressionSolver();
-//    Node* buildTreeFromEquation();
-//
-//};
-
 
 #endif //SOLVER_FJ98_EXPRESSIONSOLVER_H

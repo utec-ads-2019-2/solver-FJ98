@@ -149,16 +149,10 @@ std::string Equation::infixToPostfix()
     return postfixExp;
 }
 
-void Equation::buildTreeFromPostfix() { this->root = buildTree(this->root); }
-/*  TO BUILD THE TREE:
- *  Push <operand1> onto the stack, Push <operand2> onto the stack
- *  Pop <operand1> and <operand2>, create <operator1>-node (with <operand1> and <operand2> below), push it on the stack
- *  Push <operand3> on stack Push <operand3> on stack
- *  Pop <operand3> and <operand4> and combine to form the <operator2>-node
- *  etc.*/
-Node* Equation::buildTree(Node* tempRoot)
-{
+void Equation::buildTreeFromPostfix() {
+    auto tempRoot = this->root;
     std::stack<Node*> treeHelper;
+
     while (!postfixStack.empty())
     {
         if (!isOperator(postfixStack.top()->_data)) {
@@ -175,7 +169,8 @@ Node* Equation::buildTree(Node* tempRoot)
         treeHelper.push(tempRoot);
         tempRoot = treeHelper.top(); treeHelper.pop();
     }
-    return tempRoot;
+
+    this->root = tempRoot;
 }
 
 float Equation::solveEquation() { return this->root->execute(); } /* RECURSIVE FUNCTION*/
