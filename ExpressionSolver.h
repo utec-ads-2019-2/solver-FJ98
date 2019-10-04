@@ -20,7 +20,7 @@ struct Node {
 
         delete this;
     }
-
+//    static char isNumberDigit() {this->_data };
     float execute() {
         const char* dat = this->_data.c_str();
         switch (*dat) {
@@ -29,7 +29,7 @@ struct Node {
             case '*': return this->_left->execute() * this->_right->execute();
             case '/': return this->_left->execute() / this->_right->execute();
             case '^': return std::pow(this->_left->execute(), this->_right->execute());
-            default:  return stof(this->_data);
+            default:  { return stof(this->_data); }
         }
     }
 };
@@ -41,22 +41,28 @@ private:
     std::stack<Node*> postfixStack;
     Node* root;
 
+    std::map<std::string, float> values;
+
 private:
     static bool isOperand(const std::string&);
     static bool isOperator(const std::string&);
+    static bool isValidForVariableName (const std::string&);
     static int operatorPrecedence(const std::string&);
     static bool priority(const std::string&, const std::string&);
     static void privateTraverseInOrder(Node* traverse);
+    bool foundInMyMap(const std::string&);
+    int valueInMyMapCorrespondingToVariable(const std::string&);
 
 public:
     explicit InfixToPostfix(std::string);
     std::string infixToPostfix();
     void buildTreeFromPostfix();
     Node* buildTree(Node*);
-    size_t privateFindHeight(Node*);
+    static size_t privateFindHeight(Node*);
     inline void traverseInOrder() { privateTraverseInOrder(this->root); }
     void printEquation();
     float solveEquation();
+    void askValues();
     std::string getEquation() { return this->_expression; }
     ~InfixToPostfix();
 };

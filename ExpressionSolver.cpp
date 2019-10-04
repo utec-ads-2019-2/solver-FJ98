@@ -32,9 +32,30 @@ std::string InfixToPostfix::infixToPostfix()
 
         if (isOperand(s)) {
 //            if (i > 0 && postfixExp.at(postfixExp.size()-1) != ' ') { postfixExp += " "; }
-
             nextChar.push_back(this->_expression[i+1]);
-            if (isOperand(nextChar) && i + 1 < static_cast<int>(this->_expression.size())) {
+
+            if (isValidForVariableName(s)) {
+//                askValues();
+                if (foundInMyMap(s)){
+                    s = to_string(valueInMyMapCorrespondingToVariable(s));
+                    postfixExp += s;
+                    auto newNode = new Node{s};
+                    nodesStack.push(newNode);
+                }
+                else {
+                    float value;
+                    cout << "Inserta el valor de la variable " << s << " : ";
+                    cin >> value;
+                    values.insert({s, value});
+                    s = to_string(valueInMyMapCorrespondingToVariable(s));
+                    postfixExp += s;
+                    auto newNode = new Node{s};
+                    nodesStack.push(newNode);
+                }
+            }
+
+            // To identify if there is a number with more than one digit
+            else if (isOperand(nextChar) && i + 1 < static_cast<int>(this->_expression.size())) {
                 s.push_back(this->_expression[i + 1]);
                 postfixExp += s;
 
@@ -159,8 +180,7 @@ Node* InfixToPostfix::buildTree(Node* tempRoot)
             treeHelper.push(tempRoot);
         }
     }
-    if (!treeHelper.empty())
-    {
+    if (!treeHelper.empty()) {
         treeHelper.push(tempRoot);
         tempRoot = treeHelper.top(); treeHelper.pop();
     }
@@ -181,22 +201,6 @@ Node* InfixToPostfix::buildTree(Node* tempRoot)
 //    }
 
     return tempRoot;
-
-//    if (!isOperator(postfixStack.top()->_data)) {
-//        treeHelper.push(postfixStack.top());
-//        postfixStack.pop();
-//        treeHelper.push(postfixStack.top());
-//        postfixStack.pop();
-//    }
-//
-//    if (!tempRoot){ return; }
-//
-//    buildTree(tempRoot->_left);
-//
-//    treeHelper.pop();
-//    buildTree(tempRoot->_right);
-//    treeHelper.pop();
-//    postfixStack.pop();
 }
 
 size_t InfixToPostfix::privateFindHeight(Node* current)
@@ -224,6 +228,37 @@ InfixToPostfix::~InfixToPostfix() {
     else { this->root->killSelf(); }
 }
 
+void InfixToPostfix::askValues() {
+    for (auto && value: values) {
+        cout << "Inserta el valor de la variable " << value.first << " : ";
+        cin >> values[value.first];
+    }
+}
+
+bool InfixToPostfix::isValidForVariableName(const std::string& ch) {
+    return  ch == "_" || ("a" <= ch && ch <= "z") || ("A" <= ch && ch <= "Z");
+}
+
+bool InfixToPostfix::foundInMyMap(const std::string & myCh) {
+    auto it = values.find(myCh);
+    return it != values.end();
+}
+
+int InfixToPostfix::valueInMyMapCorrespondingToVariable(const std::string & myCh) {
+    auto it = values.find(myCh);
+    if (it != values.end()){
+        return it->second;
+    }
+    return 0;
+}
+
+
+//void InfixToPostfix::askValues () {
+//    for (auto && value: values) {
+//        cout << "Inserta el valor de la variable " << value.first << " : ";
+//        cin >> values[value.first];
+//    }
+//}
 
 
 
